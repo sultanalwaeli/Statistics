@@ -755,7 +755,7 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // بيانات جدول Google Sheets
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRwfie-YwDpPQ4I-_hL1JNu3t6YAZboxRX-2KUyZsFaU1dYIvFKusTR_4RC9hUlk0_2LLX2deSwWUnV/pub?gid=0&single=true&output=csv';
@@ -777,22 +777,6 @@
         const tripsCount = document.getElementById('trips-count');
         const visitsCount = document.getElementById('visits-count');
         const trainersCount = document.getElementById('trainers-count');
-        
-        // عناصر الأيقونات
-        const statIcons = [
-            document.getElementById('students-icon'),
-            document.getElementById('halls-icon'),
-            document.getElementById('programs-icon'),
-            document.getElementById('trips-icon'),
-            document.getElementById('visits-icon'),
-            document.getElementById('trainers-icon')
-        ];
-        
-        // عناصر القيم
-        const statValues = [
-            studentsCount, hallsCount, programsCount, 
-            tripsCount, visitsCount, trainersCount
-        ];
         
         // المتغيرات العالمية للرسوم البيانية
         let pieChart, barChart, lineChart;
@@ -845,12 +829,7 @@
                 const center = {};
                 
                 headers.forEach((header, index) => {
-                    // معالجة خاصة لحقل "عدد البرامج المثقرة"
-                    if (header === 'عدد البرامج المثقرة') {
-                        center[header] = values[index] ? values[index].trim() : '0';
-                    } else {
-                        center[header] = values[index] ? values[index].trim() : '';
-                    }
+                    center[header] = values[index] ? values[index].trim() : '0'; // افتراضي 0 بدلاً من فارغ
                 });
                 
                 return center;
@@ -882,95 +861,87 @@
                 statsHeader.className = 'stats-header male-header-bg';
                 centerGender.textContent = 'مركز ذكور';
                 centerGender.innerHTML += ' <i class="fas fa-mars"></i>';
-                
-                statIcons.forEach(icon => {
-                    icon.classList.add('male-icon');
-                    icon.classList.remove('female-icon');
-                });
-                
-                statValues.forEach(value => {
-                    value.classList.add('male-value');
-                    value.classList.remove('female-value');
-                });
             } else {
                 genderStats.classList.add('female-stats');
                 genderStats.classList.remove('male-stats');
                 statsHeader.className = 'stats-header female-header-bg';
                 centerGender.textContent = 'مركز إناث';
                 centerGender.innerHTML += ' <i class="fas fa-venus"></i>';
-                
-                statIcons.forEach(icon => {
-                    icon.classList.add('female-icon');
-                    icon.classList.remove('male-icon');
-                });
-                
-                statValues.forEach(value => {
-                    value.classList.add('female-value');
-                    value.classList.remove('male-value');
-                });
             }
             
             // تعبئة البيانات مع معالجة خاصة لعدد البرامج
-            const students = center['عدد الطلبة'] ? parseInt(center['عدد الطلبة']) : 0;
-            const halls = center['عدد القاعات'] ? parseInt(center['عدد القاعات']) : 0;
-            const programs = center['عدد البرامج المثقرة'] ? parseInt(center['عدد البرامج المثقرة']) : 0;
-            const trips = center['عدد الرحلات'] ? parseInt(center['عدد الرحلات']) : 0;
-            const visits = center['عدد الزيارات الخارجية'] ? parseInt(center['عدد الزيارات الخارجية']) : 0;
-            const trainers = center['عدد المدربين'] ? parseInt(center['عدد المدربين']) : 0;
+            const students = parseInt(center['عدد الطلبة']) || 0;
+            const halls = parseInt(center['عدد القاعات']) || 0;
+            const programs = parseInt(center['عدد البرامج المثقرة']) || 0;
+            const trips = parseInt(center['عدد الرحلات']) || 0;
+            const visits = parseInt(center['عدد الزيارات الخارجية']) || 0;
+            const trainers = parseInt(center['عدد المدربين']) || 0;
             
-            studentsCount.textContent = students || 'غير متوفر';
-            hallsCount.textContent = halls || 'غير متوفر';
-            programsCount.textContent = programs > 0 ? programs : 'غير متوفر';
-            tripsCount.textContent = trips || 'غير متوفر';
-            visitsCount.textContent = visits || 'غير متوفر';
-            trainersCount.textContent = trainers || 'غير متوفر';
+            studentsCount.textContent = students.toLocaleString('ar-EG');
+            hallsCount.textContent = halls.toLocaleString('ar-EG');
+            programsCount.textContent = programs.toLocaleString('ar-EG');
+            tripsCount.textContent = trips.toLocaleString('ar-EG');
+            visitsCount.textContent = visits.toLocaleString('ar-EG');
+            trainersCount.textContent = trainers.toLocaleString('ar-EG');
             
-            // إنشاء الرسوم البيانية
-            createCharts(students, halls, programs, trips, visits, trainers, isMale);
+            // إضافة ألوان للقيم
+            const statValues = [studentsCount, hallsCount, programsCount, tripsCount, visitsCount, trainersCount];
+            statValues.forEach(el => {
+                el.style.color = isMale ? '#3498db' : '#e83f8e';
+                el.style.fontWeight = 'bold';
+                el.style.fontSize = '1.8rem';
+            });
+            
+            // إنشاء الرسوم البيانية مع تأثيرات متدرجة
+            setTimeout(() => createPieChart(students, halls, trainers, isMale), 300);
+            setTimeout(() => createBarChart(students, halls, programs, trips, visits, trainers, isMale), 600);
+            setTimeout(() => createLineChart(programs, trips, visits), 900);
             
             noCenter.style.display = 'none';
             centerInfo.style.display = 'block';
             
-            // إضافة تأثير مميز عند العرض
-            genderStats.classList.add('animate__animated', 'animate__pulse');
+            // تأثير مميز عند العرض
+            genderStats.classList.add('animate__animated', 'animate__fadeInUp');
             setTimeout(() => {
-                genderStats.classList.remove('animate__animated', 'animate__pulse');
+                genderStats.classList.remove('animate__animated', 'animate__fadeInUp');
             }, 1000);
         }
         
-        // إنشاء الرسوم البيانية
-        function createCharts(students, halls, programs, trips, visits, trainers, isMale) {
-                  // تدمير الرسوم البيانية القديمة إذا كانت موجودة
+        // إنشاء الرسم البياني الدائري مع تأثيرات
+        function createPieChart(students, halls, trainers, isMale) {
             if (pieChart) pieChart.destroy();
-            if (barChart) barChart.destroy();
-            if (lineChart) lineChart.destroy();
-
-            // بيانات الرسم البياني الدائري
-            const pieData = {
-                labels: ['طلبة', 'قاعات', 'مدربين'],
-                datasets: [{
-                    data: [students, halls, trainers],
-                    backgroundColor: [
-                        isMale ? 'rgba(52, 152, 219, 0.7)' : 'rgba(232, 63, 142, 0.7)',
-                        isMale ? 'rgba(52, 152, 219, 0.5)' : 'rgba(232, 63, 142, 0.5)',
-                        isMale ? 'rgba(52, 152, 219, 0.3)' : 'rgba(232, 63, 142, 0.3)'
-                    ],
-                    borderColor: [
-                        isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)',
-                        isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)',
-                        isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)'
-                    ],
-                    borderWidth: 2
-                }]
-            };
-
-            // إنشاء الرسم البياني الدائري
+            
             const pieCtx = document.getElementById('pieChart').getContext('2d');
+            
+            // تأثير التدرج اللوني
+            const gradient1 = pieCtx.createLinearGradient(0, 0, 300, 300);
+            gradient1.addColorStop(0, isMale ? '#3498db' : '#e83f8e');
+            gradient1.addColorStop(1, isMale ? '#2980b9' : '#d32f7e');
+            
+            const gradient2 = pieCtx.createLinearGradient(0, 0, 300, 300);
+            gradient2.addColorStop(0, isMale ? '#2ecc71' : '#9b59b6');
+            gradient2.addColorStop(1, isMale ? '#27ae60' : '#8e44ad');
+            
+            const gradient3 = pieCtx.createLinearGradient(0, 0, 300, 300);
+            gradient3.addColorStop(0, isMale ? '#f1c40f' : '#1abc9c');
+            gradient3.addColorStop(1, isMale ? '#f39c12' : '#16a085');
+            
             pieChart = new Chart(pieCtx, {
-                type: 'pie',
-                data: pieData,
+                type: 'doughnut',
+                data: {
+                    labels: ['الطلبة', 'القاعات', 'المدربين'],
+                    datasets: [{
+                        data: [students, halls, trainers],
+                        backgroundColor: [gradient1, gradient2, gradient3],
+                        borderColor: '#fff',
+                        borderWidth: 3,
+                        hoverOffset: 15
+                    }]
+                },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
                     plugins: {
                         legend: {
                             position: 'bottom',
@@ -978,9 +949,11 @@
                             labels: {
                                 font: {
                                     family: 'Tajawal',
-                                    size: 14
+                                    size: 12
                                 },
-                                padding: 20
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
                             }
                         },
                         tooltip: {
@@ -988,56 +961,75 @@
                                 family: 'Tajawal',
                                 size: 14
                             },
-                            titleFont: {
-                                family: 'Tajawal',
-                                size: 16
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw.toLocaleString('ar-EG')}`;
+                                }
                             }
                         }
                     },
                     animation: {
                         animateScale: true,
-                        animateRotate: true
+                        animateRotate: true,
+                        duration: 1500
                     }
                 }
             });
-
-            // بيانات الرسم البياني الشريطي
-            const barData = {
-                labels: ['طلبة', 'قاعات', 'برامج', 'رحلات', 'زيارات', 'مدربين'],
-                datasets: [{
-                    label: 'الإحصائيات',
-                    data: [students, halls, programs, trips, visits, trainers],
-                    backgroundColor: isMale ? 
-                        'rgba(52, 152, 219, 0.7)' : 'rgba(232, 63, 142, 0.7)',
-                    borderColor: isMale ? 
-                        'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)',
-                    borderWidth: 2,
-                    borderRadius: 10
-                }]
-            };
-
-            // إنشاء الرسم البياني الشريطي
+        }
+        
+        // إنشاء الرسم البياني الشريطي مع تأثيرات
+        function createBarChart(students, halls, programs, trips, visits, trainers, isMale) {
+            if (barChart) barChart.destroy();
+            
             const barCtx = document.getElementById('barChart').getContext('2d');
+            
+            // تأثير التدرج اللوني
+            const gradient = barCtx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, isMale ? 'rgba(52, 152, 219, 0.9)' : 'rgba(232, 63, 142, 0.9)');
+            gradient.addColorStop(1, isMale ? 'rgba(52, 152, 219, 0.2)' : 'rgba(232, 63, 142, 0.2)');
+            
             barChart = new Chart(barCtx, {
                 type: 'bar',
-                data: barData,
+                data: {
+                    labels: ['الطلبة', 'القاعات', 'البرامج', 'الرحلات', 'الزيارات', 'المدربين'],
+                    datasets: [{
+                        label: 'الإحصائيات',
+                        data: [students, halls, programs, trips, visits, trainers],
+                        backgroundColor: gradient,
+                        borderColor: isMale ? '#3498db' : '#e83f8e',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        hoverBackgroundColor: isMale ? '#2980b9' : '#d32f7e'
+                    }]
+                },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
                                 font: {
-                                    family: 'Tajawal'
+                                    family: 'Tajawal',
+                                    size: 12
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString('ar-EG');
                                 }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
                             }
                         },
                         x: {
                             ticks: {
                                 font: {
                                     family: 'Tajawal',
-                                    size: 14
+                                    size: 12
                                 }
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
@@ -1050,76 +1042,106 @@
                                 family: 'Tajawal',
                                 size: 14
                             },
-                            titleFont: {
-                                family: 'Tajawal',
-                                size: 16
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw.toLocaleString('ar-EG')}`;
+                                }
                             }
                         }
                     },
                     animation: {
                         delay: function(context) {
                             return context.dataIndex * 100;
-                        }
+                        },
+                        duration: 1000
                     }
                 }
             });
-
-            // بيانات الرسم البياني الخطي للنشاطات
-            const lineData = {
-                labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
-                datasets: [
-                    {
-                        label: 'البرامج التعليمية',
-                        data: [
-                            Math.floor(programs * 0.2),
-                            Math.floor(programs * 0.4),
-                            Math.floor(programs * 0.7),
-                            programs
-                        ],
-                        borderColor: 'rgba(244, 179, 80, 1)',
-                        backgroundColor: 'rgba(244, 179, 80, 0.2)',
-                        borderWidth: 3,
-                        tension: 0.3,
-                        fill: true
-                    },
-                    {
-                        label: 'الرحلات',
-                        data: [
-                            Math.floor(trips * 0.3),
-                            Math.floor(trips * 0.6),
-                            Math.floor(trips * 0.8),
-                            trips
-                        ],
-                        borderColor: 'rgba(46, 204, 113, 1)',
-                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                        borderWidth: 3,
-                        tension: 0.3,
-                        fill: true
-                    },
-                    {
-                        label: 'الزيارات',
-                        data: [
-                            Math.floor(visits * 0.1),
-                            Math.floor(visits * 0.5),
-                            Math.floor(visits * 0.9),
-                            visits
-                        ],
-                        borderColor: 'rgba(155, 89, 182, 1)',
-                        backgroundColor: 'rgba(155, 89, 182, 0.2)',
-                        borderWidth: 3,
-                        tension: 0.3,
-                        fill: true
-                    }
-                ]
-            };
-
-            // إنشاء الرسم البياني الخطي
+        }
+        
+        // إنشاء الرسم البياني الخطي مع تأثيرات
+        function createLineChart(programs, trips, visits) {
+            if (lineChart) lineChart.destroy();
+            
             const lineCtx = document.getElementById('lineChart').getContext('2d');
+            
+            // تأثيرات التدرج اللوني
+            const gradient1 = lineCtx.createLinearGradient(0, 0, 0, 300);
+            gradient1.addColorStop(0, 'rgba(244, 179, 80, 0.7)');
+            gradient1.addColorStop(1, 'rgba(244, 179, 80, 0.1)');
+            
+            const gradient2 = lineCtx.createLinearGradient(0, 0, 0, 300);
+            gradient2.addColorStop(0, 'rgba(46, 204, 113, 0.7)');
+            gradient2.addColorStop(1, 'rgba(46, 204, 113, 0.1)');
+            
+            const gradient3 = lineCtx.createLinearGradient(0, 0, 0, 300);
+            gradient3.addColorStop(0, 'rgba(155, 89, 182, 0.7)');
+            gradient3.addColorStop(1, 'rgba(155, 89, 182, 0.1)');
+            
             lineChart = new Chart(lineCtx, {
                 type: 'line',
-                data: lineData,
+                data: {
+                    labels: ['الأسبوع الأول', 'الأسبوع الثاني', 'الأسبوع الثالث', 'الأسبوع الرابع'],
+                    datasets: [
+                        {
+                            label: 'البرامج التعليمية',
+                            data: [
+                                Math.floor(programs * 0.2),
+                                Math.floor(programs * 0.5),
+                                Math.floor(programs * 0.8),
+                                programs
+                            ],
+                            borderColor: '#f4b350',
+                            backgroundColor: gradient1,
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#f4b350',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'الرحلات',
+                            data: [
+                                Math.floor(trips * 0.3),
+                                Math.floor(trips * 0.6),
+                                Math.floor(trips * 0.9),
+                                trips
+                            ],
+                            borderColor: '#2ecc71',
+                            backgroundColor: gradient2,
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#2ecc71',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'الزيارات',
+                            data: [
+                                Math.floor(visits * 0.1),
+                                Math.floor(visits * 0.4),
+                                Math.floor(visits * 0.7),
+                                visits
+                            ],
+                            borderColor: '#9b59b6',
+                            backgroundColor: gradient3,
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#9b59b6',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     interaction: {
                         mode: 'index',
                         intersect: false
@@ -1129,16 +1151,26 @@
                             beginAtZero: true,
                             ticks: {
                                 font: {
-                                    family: 'Tajawal'
+                                    family: 'Tajawal',
+                                    size: 12
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString('ar-EG');
                                 }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
                             }
                         },
                         x: {
                             ticks: {
                                 font: {
                                     family: 'Tajawal',
-                                    size: 14
+                                    size: 12
                                 }
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
@@ -1149,9 +1181,11 @@
                             labels: {
                                 font: {
                                     family: 'Tajawal',
-                                    size: 14
+                                    size: 12
                                 },
-                                padding: 20
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
                             }
                         },
                         tooltip: {
@@ -1159,9 +1193,10 @@
                                 family: 'Tajawal',
                                 size: 14
                             },
-                            titleFont: {
-                                family: 'Tajawal',
-                                size: 16
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw.toLocaleString('ar-EG')}`;
+                                }
                             }
                         }
                     },
@@ -1171,7 +1206,7 @@
                 }
             });
         }
-
+        
         // إخفاء معلومات المركز
         function hideCenterInfo() {
             centerInfo.style.display = 'none';
@@ -1179,13 +1214,13 @@
             centerSelect.value = '';
             clickOutsideListener.style.display = 'none';
             
-            // إضافة تأثير عند الإخفاء
-            noCenter.classList.add('animate__animated', 'animate__pulse');
+            // تأثير عند الإخفاء
+            noCenter.classList.add('animate__animated', 'animate__fadeIn');
             setTimeout(() => {
-                noCenter.classList.remove('animate__animated', 'animate__pulse');
+                noCenter.classList.remove('animate__animated', 'animate__fadeIn');
             }, 1000);
         }
-
+        
         // بدء التطبيق عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', fetchData);
     </script>
