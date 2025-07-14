@@ -250,6 +250,9 @@
             display: inline-block;
             left: 50%;
             transform: translateX(-50%);
+            padding: 0 1rem;
+            background: white;
+            z-index: 1;
         }
 
         .chart-title::after {
@@ -266,13 +269,14 @@
         .chart-card {
             background: white;
             border-radius: 15px;
-            padding: 1.5rem 1.5rem 2.5rem;
+            padding: 2rem 1.5rem 3rem;
             margin-bottom: 2rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             transition: all 0.4s;
             height: 100%;
-            min-height: 320px;
+            min-height: 350px;
             overflow: visible;
+            position: relative;
         }
 
         .chart-card:hover {
@@ -518,7 +522,7 @@
             }
             
             .chart-card {
-                min-height: 280px;
+                min-height: 320px;
             }
         }
 
@@ -553,8 +557,8 @@
             }
             
             .chart-card {
-                min-height: 250px;
-                padding: 1.5rem 1.5rem 2rem;
+                min-height: 280px;
+                padding: 1.5rem 1rem 2.5rem;
             }
         }
 
@@ -603,8 +607,8 @@
             }
             
             .chart-card {
-                min-height: 220px;
-                padding: 1rem 1rem 1.5rem;
+                min-height: 250px;
+                padding: 1rem 1rem 2rem;
             }
         }
     </style>
@@ -705,21 +709,21 @@
                         <div class="col-md-6">
                             <div class="chart-card">
                                 <h5 class="chart-title">التوزيع النسبي</h5>
-                                <canvas id="pieChart" height="250"></canvas>
+                                <canvas id="pieChart" height="300"></canvas>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
                             <div class="chart-card">
                                 <h5 class="chart-title">المقارنة الإحصائية</h5>
-                                <canvas id="barChart" height="250"></canvas>
+                                <canvas id="barChart" height="300"></canvas>
                             </div>
                         </div>
                         
                         <div class="col-md-12 mt-4">
                             <div class="chart-card">
                                 <h5 class="chart-title">النشاطات والبرامج</h5>
-                                <canvas id="lineChart" height="250"></canvas>
+                                <canvas id="lineChart" height="300"></canvas>
                             </div>
                         </div>
                     </div>
@@ -841,7 +845,12 @@
                 const center = {};
                 
                 headers.forEach((header, index) => {
-                    center[header] = values[index] ? values[index].trim() : '';
+                    // معالجة خاصة لحقل "عدد البرامج المثقرة"
+                    if (header === 'عدد البرامج المثقرة') {
+                        center[header] = values[index] ? values[index].trim() : '0';
+                    } else {
+                        center[header] = values[index] ? values[index].trim() : '';
+                    }
                 });
                 
                 return center;
@@ -901,7 +910,7 @@
                 });
             }
             
-            // تعبئة البيانات
+            // تعبئة البيانات مع معالجة خاصة لعدد البرامج
             const students = center['عدد الطلبة'] ? parseInt(center['عدد الطلبة']) : 0;
             const halls = center['عدد القاعات'] ? parseInt(center['عدد القاعات']) : 0;
             const programs = center['عدد البرامج المثقرة'] ? parseInt(center['عدد البرامج المثقرة']) : 0;
@@ -911,7 +920,7 @@
             
             studentsCount.textContent = students || 'غير متوفر';
             hallsCount.textContent = halls || 'غير متوفر';
-            programsCount.textContent = programs || 'غير متوفر';
+            programsCount.textContent = programs > 0 ? programs : 'غير متوفر';
             tripsCount.textContent = trips || 'غير متوفر';
             visitsCount.textContent = visits || 'غير متوفر';
             trainersCount.textContent = trainers || 'غير متوفر';
@@ -931,7 +940,7 @@
         
         // إنشاء الرسوم البيانية
         function createCharts(students, halls, programs, trips, visits, trainers, isMale) {
-            // تدمير الرسوم البيانية القديمة إذا كانت موجودة
+       // تدمير الرسوم البيانية القديمة إذا كانت موجودة
             if (pieChart) pieChart.destroy();
             if (barChart) barChart.destroy();
             if (lineChart) lineChart.destroy();
