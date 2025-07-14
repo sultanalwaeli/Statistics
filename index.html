@@ -940,70 +940,58 @@
         
         // إنشاء الرسوم البيانية
         function createCharts(students, halls, programs, trips, visits, trainers, isMale) {
-       // تدمير الرسوم البيانية القديمة إذا كانت موجودة
+                  // تدمير الرسوم البيانية القديمة إذا كانت موجودة
             if (pieChart) pieChart.destroy();
             if (barChart) barChart.destroy();
             if (lineChart) lineChart.destroy();
-            
-            const primaryColor = isMale ? 'rgba(52, 152, 219, 0.7)' : 'rgba(232, 63, 142, 0.7)';
-            const hoverColor = isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)';
-            const bgColor = isMale ? 'rgba(52, 152, 219, 0.2)' : 'rgba(232, 63, 142, 0.2)';
-            
-            // رسم بياني دائري
+
+            // بيانات الرسم البياني الدائري
+            const pieData = {
+                labels: ['طلبة', 'قاعات', 'مدربين'],
+                datasets: [{
+                    data: [students, halls, trainers],
+                    backgroundColor: [
+                        isMale ? 'rgba(52, 152, 219, 0.7)' : 'rgba(232, 63, 142, 0.7)',
+                        isMale ? 'rgba(52, 152, 219, 0.5)' : 'rgba(232, 63, 142, 0.5)',
+                        isMale ? 'rgba(52, 152, 219, 0.3)' : 'rgba(232, 63, 142, 0.3)'
+                    ],
+                    borderColor: [
+                        isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)',
+                        isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)',
+                        isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            // إنشاء الرسم البياني الدائري
             const pieCtx = document.getElementById('pieChart').getContext('2d');
             pieChart = new Chart(pieCtx, {
                 type: 'pie',
-                data: {
-                    labels: ['الطلبة', 'القاعات', 'المدربين'],
-                    datasets: [{
-                        data: [students, halls, trainers],
-                        backgroundColor: [
-                            primaryColor,
-                            'rgba(244, 179, 80, 0.7)',
-                            'rgba(155, 89, 182, 0.7)'
-                        ],
-                        borderColor: [
-                            hoverColor,
-                            'rgba(244, 179, 80, 1)',
-                            'rgba(155, 89, 182, 1)'
-                        ],
-                        borderWidth: 2,
-                        hoverOffset: 15
-                    }]
-                },
+                data: pieData,
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: 'bottom',
                             rtl: true,
                             labels: {
-                                padding: 20,
                                 font: {
-                                    size: 12
-                                }
+                                    family: 'Tajawal',
+                                    size: 14
+                                },
+                                padding: 20
                             }
                         },
                         tooltip: {
-                            rtl: true,
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
+                            bodyFont: {
+                                family: 'Tajawal',
+                                size: 14
+                            },
+                            titleFont: {
+                                family: 'Tajawal',
+                                size: 16
                             }
-                        }
-                    },
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 20,
-                            left: 10,
-                            right: 10
                         }
                     },
                     animation: {
@@ -1012,52 +1000,44 @@
                     }
                 }
             });
-            
-            // رسم بياني شريطي
+
+            // بيانات الرسم البياني الشريطي
+            const barData = {
+                labels: ['طلبة', 'قاعات', 'برامج', 'رحلات', 'زيارات', 'مدربين'],
+                datasets: [{
+                    label: 'الإحصائيات',
+                    data: [students, halls, programs, trips, visits, trainers],
+                    backgroundColor: isMale ? 
+                        'rgba(52, 152, 219, 0.7)' : 'rgba(232, 63, 142, 0.7)',
+                    borderColor: isMale ? 
+                        'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)',
+                    borderWidth: 2,
+                    borderRadius: 10
+                }]
+            };
+
+            // إنشاء الرسم البياني الشريطي
             const barCtx = document.getElementById('barChart').getContext('2d');
             barChart = new Chart(barCtx, {
                 type: 'bar',
-                data: {
-                    labels: ['البرامج', 'الرحلات', 'الزيارات'],
-                    datasets: [{
-                        label: 'النشاطات',
-                        data: [programs, trips, visits],
-                        backgroundColor: [
-                            primaryColor,
-                            'rgba(244, 179, 80, 0.7)',
-                            'rgba(155, 89, 182, 0.7)'
-                        ],
-                        borderColor: [
-                            hoverColor,
-                            'rgba(244, 179, 80, 1)',
-                            'rgba(155, 89, 182, 1)'
-                        ],
-                        borderWidth: 2,
-                        borderRadius: 10
-                    }]
-                },
+                data: barData,
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            bottom: 30,
-                            top: 10,
-                            left: 10,
-                            right: 10
-                        }
-                    },
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                stepSize: 1,
-                                padding: 15
+                                font: {
+                                    family: 'Tajawal'
+                                }
                             }
                         },
                         x: {
                             ticks: {
-                                padding: 10
+                                font: {
+                                    family: 'Tajawal',
+                                    size: 14
+                                }
                             }
                         }
                     },
@@ -1066,90 +1046,147 @@
                             display: false
                         },
                         tooltip: {
-                            rtl: true
+                            bodyFont: {
+                                family: 'Tajawal',
+                                size: 14
+                            },
+                            titleFont: {
+                                family: 'Tajawal',
+                                size: 16
+                            }
                         }
                     },
                     animation: {
                         delay: function(context) {
-                            return context.dataIndex * 200;
+                            return context.dataIndex * 100;
                         }
                     }
                 }
             });
-            
-            // رسم بياني خطي
+
+            // بيانات الرسم البياني الخطي للنشاطات
+            const lineData = {
+                labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
+                datasets: [
+                    {
+                        label: 'البرامج التعليمية',
+                        data: [
+                            Math.floor(programs * 0.2),
+                            Math.floor(programs * 0.4),
+                            Math.floor(programs * 0.7),
+                            programs
+                        ],
+                        borderColor: 'rgba(244, 179, 80, 1)',
+                        backgroundColor: 'rgba(244, 179, 80, 0.2)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'الرحلات',
+                        data: [
+                            Math.floor(trips * 0.3),
+                            Math.floor(trips * 0.6),
+                            Math.floor(trips * 0.8),
+                            trips
+                        ],
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'الزيارات',
+                        data: [
+                            Math.floor(visits * 0.1),
+                            Math.floor(visits * 0.5),
+                            Math.floor(visits * 0.9),
+                            visits
+                        ],
+                        borderColor: 'rgba(155, 89, 182, 1)',
+                        backgroundColor: 'rgba(155, 89, 182, 0.2)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            };
+
+            // إنشاء الرسم البياني الخطي
             const lineCtx = document.getElementById('lineChart').getContext('2d');
             lineChart = new Chart(lineCtx, {
                 type: 'line',
-                data: {
-                    labels: ['الطلبة', 'القاعات', 'البرامج', 'الرحلات', 'الزيارات', 'المدربين'],
-                    datasets: [{
-                        label: 'الإحصائيات',
-                        data: [students, halls, programs, trips, visits, trainers],
-                        fill: true,
-                        backgroundColor: bgColor,
-                        borderColor: primaryColor,
-                        borderWidth: 3,
-                        tension: 0.3,
-                        pointBackgroundColor: primaryColor,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }]
-                },
+                data: lineData,
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            rtl: true
-                        }
-                    },
-                    layout: {
-                        padding: {
-                            bottom: 30,
-                            top: 10,
-                            left: 10,
-                            right: 10
-                        }
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                padding: 10
+                                font: {
+                                    family: 'Tajawal'
+                                }
                             }
                         },
                         x: {
                             ticks: {
-                                padding: 10
+                                font: {
+                                    family: 'Tajawal',
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true,
+                            labels: {
+                                font: {
+                                    family: 'Tajawal',
+                                    size: 14
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                family: 'Tajawal',
+                                size: 14
+                            },
+                            titleFont: {
+                                family: 'Tajawal',
+                                size: 16
                             }
                         }
                     },
                     animation: {
-                        duration: 2000,
-                        easing: 'easeOutQuart'
+                        duration: 2000
                     }
                 }
             });
         }
-        
+
         // إخفاء معلومات المركز
         function hideCenterInfo() {
-            noCenter.style.display = 'block';
             centerInfo.style.display = 'none';
+            noCenter.style.display = 'block';
             centerSelect.value = '';
             clickOutsideListener.style.display = 'none';
             
-            // تدمير الرسوم البيانية عند الإخفاء
-            if (pieChart) pieChart.destroy();
-            if (barChart) barChart.destroy();
-            if (lineChart) lineChart.destroy();
+            // إضافة تأثير عند الإخفاء
+            noCenter.classList.add('animate__animated', 'animate__pulse');
+            setTimeout(() => {
+                noCenter.classList.remove('animate__animated', 'animate__pulse');
+            }, 1000);
         }
-        
-        // بدء التطبيق
+
+        // بدء التطبيق عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', fetchData);
     </script>
 </body>
