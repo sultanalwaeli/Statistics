@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إحصائية المراكز الصيفية 2025 | صيفي تواصل ونماء</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a6f5a; /* لون أخضر داكن */
+            --secondary-color: #2d9d78; /* لون أخضر متوسط */
+            --accent-color: #f4b350; /* لون ذهبي/برتقالي */
+            --male-color: #3498db; /* لون أزرق للمراكز الذكور */
+            --female-color: #e83f8e; /* لون وردي للمراكز الإناث */
+            --light-color: #f8f9fa;
+            --text-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            background-image: url('https://a.top4top.io/p_3463hcooj1.png');
+            background-size: 30%;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: overlay;
+            background-color: rgba(248, 249, 250, 0.85);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid var(--accent-color);
+        }
+        
+        .logo {
+            max-width: 180px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2));
+            transition: transform 0.5s;
+        }
+        
+        .logo:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+        
+        .center-card {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            border-top: 5px solid;
+        }
+        
+        .male-card {
+            border-top-color: var(--male-color);
+        }
+        
+        .female-card {
+            border-top-color: var(--female-color);
+        }
+        
+        .center-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .center-header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            color: white;
+        }
+        
+        .male-header {
+            background: linear-gradient(135deg, var(--male-color), #2980b9);
+        }
+        
+        .female-header {
+            background: linear-gradient(135deg, var(--female-color), #d32f7e);
+        }
+        
+        .center-header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+        
+        .stat-item {
+            padding: 1.8rem;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stat-item:hover {
+            background-color: rgba(45, 157, 120, 0.08);
+            transform: translateX(5px);
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-icon {
+            font-size: 1.8rem;
+            margin-left: 15px;
+            width: 50px;
+            height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .male-icon {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: var(--male-color);
+        }
+        
+        .female-icon {
+            background-color: rgba(232, 63, 142, 0.15);
+            color: var(--female-color);
+        }
+        
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: left;
+        }
+        
+        .male-value {
+            color: var(--male-color);
+        }
+        
+        .female-value {
+            color: var(--female-color);
+        }
+        
+        .select-center {
+            max-width: 500px;
+            margin: 0 auto 3rem;
+        }
+        
+        .form-select {
+            border: 3px solid var(--secondary-color);
+            border-radius: 12px;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%232d9d78' d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3e%3c/svg%3e");
+        }
+        
+        .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(244, 179, 80, 0.3);
+            transform: scale(1.02);
+        }
+        
+        .no-center {
+            text-align: center;
+            padding: 4rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            margin: 3rem 0;
+            border: 2px dashed var(--secondary-color);
+        }
+        
+        .no-center i {
+            font-size: 4rem;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--primary-color), #154c3d);
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 5rem;
+            position: relative;
+            border-top: 5px solid var(--accent-color);
+        }
+        
+        .footer::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, var(--accent-color), rgba(244, 179, 80, 0.7));
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .shape-1 {
+            top: 20%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(244,179,80,0.15) 0%, rgba(244,179,80,0) 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .shape-2 {
+            bottom: 15%;
+            right: 10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(45,157,120,0.1) 0%, rgba(45,157,120,0) 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite 2s;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                background-size: 70%;
+            }
+            
+            .header {
+                padding: 2rem 0;
+            }
+            
+            .logo {
+                max-width: 140px;
+            }
+            
+            .stat-item {
+                padding: 1.3rem;
+            }
+            
+            .stat-icon {
+                font-size: 1.4rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .stat-value {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="floating-shapes shape-1"></div>
+    <div class="floating-shapes shape-2"></div>
+    
+    <div class="header text-center">
+        <div class="container">
+            <img src="https://a.top4top.io/p_3463hcooj1.png" alt="شعار المراكز الصيفية - صيفي تواصل ونماء" class="logo">
+            <h1 class="mb-3">إحصائية المراكز الصيفية 2025</h1>
+            <p class="lead"><span class="fw-bold" style="color: var(--accent-color);">صيفي تواصل ونماء</span></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 select-center">
+                <select id="center-select" class="form-select form-select-lg">
+                    <option value="" selected disabled>اختر مركزًا لعرض إحصاءاته</option>
+                    <!-- سيتم ملؤها بالجافاسكريبت -->
+                </select>
+            </div>
+        </div>
+
+        <div id="center-info" class="row justify-content-center" style="display: none;">
+            <div class="col-lg-8">
+                <div class="center-card" id="gender-card">
+                    <div class="center-header" id="gender-header">
+                        <h2 id="center-name"></h2>
+                        <p id="center-gender" class="mb-0"></p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-users stat-icon" id="students-icon"></i>
+                            <span>عدد الطلبة</span>
+                        </div>
+                        <span class="stat-value" id="students-count"></span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-door-open stat-icon" id="halls-icon"></i>
+                            <span>عدد القاعات</span>
+                        </div>
+                        <span class="stat-value" id="halls-count"></span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-book stat-icon" id="programs-icon"></i>
+                            <span>عدد البرامج المقدمة</span>
+                        </div>
+                        <span class="stat-value" id="programs-count"></span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-bus stat-icon" id="trips-icon"></i>
+                            <span>عدد الرحلات</span>
+                        </div>
+                        <span class="stat-value" id="trips-count"></span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-map-marked-alt stat-icon" id="visits-icon"></i>
+                            <span>عدد الزيارات الخارجية</span>
+                        </div>
+                        <span class="stat-value" id="visits-count"></span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-chalkboard-teacher stat-icon" id="trainers-icon"></i>
+                            <span>عدد المدربين</span>
+                        </div>
+                        <span class="stat-value" id="trainers-count"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="no-center" class="no-center">
+            <i class="fas fa-info-circle"></i>
+            <h4>الرجاء اختيار مركز من القائمة</h4>
+            <p>سيتم عرض إحصائيات المركز المختار هنا</p>
+        </div>
+    </div>
+
+    <footer class="footer text-center">
+        <div class="container">
+            <p class="mb-0">© 2025 نظام إحصائية المراكز الصيفية - صيفي تواصل ونماء. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // بيانات جدول Google Sheets
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRwfie-YwDpPQ4I-_hL1JNu3t6YAZboxRX-2KUyZsFaU1dYIvFKusTR_4RC9hUlk0_2LLX2deSwWUnV/pub?gid=0&single=true&output=csv';
+        
+        // عناصر DOM
+        const centerSelect = document.getElementById('center-select');
+        const centerInfo = document.getElementById('center-info');
+        const noCenter = document.getElementById('no-center');
+        const genderCard = document.getElementById('gender-card');
+        const genderHeader = document.getElementById('gender-header');
+        
+        // عناصر البيانات
+        const centerName = document.getElementById('center-name');
+        const centerGender = document.getElementById('center-gender');
+        const studentsCount = document.getElementById('students-count');
+        const hallsCount = document.getElementById('halls-count');
+        const programsCount = document.getElementById('programs-count');
+        const tripsCount = document.getElementById('trips-count');
+        const visitsCount = document.getElementById('visits-count');
+        const trainersCount = document.getElementById('trainers-count');
+        
+        // عناصر الأيقونات
+        const statIcons = [
+            document.getElementById('students-icon'),
+            document.getElementById('halls-icon'),
+            document.getElementById('programs-icon'),
+            document.getElementById('trips-icon'),
+            document.getElementById('visits-icon'),
+            document.getElementById('trainers-icon')
+        ];
+        
+        // عناصر القيم
+        const statValues = [
+            studentsCount, hallsCount, programsCount, 
+            tripsCount, visitsCount, trainersCount
+        ];
+        
+        // جلب البيانات من Google Sheets
+        async function fetchData() {
+            try {
+                const response = await fetch(sheetUrl);
+                const csvData = await response.text();
+                const centers = parseCSV(csvData);
+                
+                // تعبئة القائمة المنسدلة
+                populateSelect(centers);
+                
+                // إضافة مستمع لحدث التغيير
+                centerSelect.addEventListener('change', (e) => {
+                    const selectedCenter = e.target.value;
+                    if (selectedCenter) {
+                        const center = centers.find(c => c['اسم المركز'] === selectedCenter);
+                        displayCenterInfo(center);
+                    } else {
+                        noCenter.style.display = 'block';
+                        centerInfo.style.display = 'none';
+                    }
+                });
+                
+            } catch (error) {
+                console.error('حدث خطأ في جلب البيانات:', error);
+                alert('حدث خطأ في جلب البيانات. الرجاء المحاولة لاحقًا.');
+            }
+        }
+        
+        // تحويل CSV إلى مصفوفة كائنات
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                const center = {};
+                
+                headers.forEach((header, index) => {
+                    center[header] = values[index] ? values[index].trim() : '';
+                });
+                
+                return center;
+            }).filter(center => center['اسم المركز']); // تصفية المراكز الفارغة
+        }
+        
+        // تعبئة القائمة المنسدلة بأسماء المراكز
+        function populateSelect(centers) {
+            centers.forEach(center => {
+                const option = document.createElement('option');
+                option.value = center['اسم المركز'];
+                option.textContent = center['اسم المركز'];
+                centerSelect.appendChild(option);
+            });
+        }
+        
+        // عرض معلومات المركز المحدد
+        function displayCenterInfo(center) {
+            if (!center) return;
+            
+            centerName.textContent = center['اسم المركز'];
+            
+            // تحديد نوع المركز (ذكور/إناث)
+            const isMale = center['اسم المركز'].includes('حذيفة') || center['اسم المركز'].includes('حمود');
+            
+            if (isMale) {
+                genderCard.classList.add('male-card');
+                genderCard.classList.remove('female-card');
+                genderHeader.className = 'center-header male-header';
+                centerGender.textContent = 'مركز ذكور';
+                centerGender.innerHTML += ' <i class="fas fa-mars"></i>';
+                
+                statIcons.forEach(icon => {
+                    icon.classList.add('male-icon');
+                    icon.classList.remove('female-icon');
+                });
+                
+                statValues.forEach(value => {
+                    value.classList.add('male-value');
+                    value.classList.remove('female-value');
+                });
+            } else {
+                genderCard.classList.add('female-card');
+                genderCard.classList.remove('male-card');
+                genderHeader.className = 'center-header female-header';
+                centerGender.textContent = 'مركز إناث';
+                centerGender.innerHTML += ' <i class="fas fa-venus"></i>';
+                
+                statIcons.forEach(icon => {
+                    icon.classList.add('female-icon');
+                    icon.classList.remove('male-icon');
+                });
+                
+                statValues.forEach(value => {
+                    value.classList.add('female-value');
+                    value.classList.remove('male-value');
+                });
+            }
+            
+            studentsCount.textContent = center['عدد الطلبة'] || 'غير متوفر';
+            hallsCount.textContent = center['عدد القاعات'] || 'غير متوفر';
+            programsCount.textContent = center['عدد البرامج المثقرة'] || 'غير متوفر';
+            tripsCount.textContent = center['عدد الرحلات'] || 'غير متوفر';
+            visitsCount.textContent = center['عدد الزيارات الخارجية'] || 'غير متوفر';
+            trainersCount.textContent = center['عدد المدربين'] || 'غير متوفر';
+            
+            noCenter.style.display = 'none';
+            centerInfo.style.display = 'block';
+        }
+        
+        // بدء التطبيق
+        document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+</body>
+</html>
