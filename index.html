@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #1a6f5a;
@@ -18,6 +19,8 @@
             --light-color: #f8f9fa;
             --text-color: #2c3e50;
             --gold-gradient: linear-gradient(135deg, #f4b350, #f8d56b);
+            --chart-male: rgba(52, 152, 219, 0.7);
+            --chart-female: rgba(232, 63, 142, 0.7);
         }
         
         body {
@@ -35,7 +38,7 @@
             min-height: 100vh;
         }
 
-        /* تأثيرات الألوان المتحركة */
+        /* تأثيرات الحركة */
         @keyframes gradientFlow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -60,19 +63,23 @@
             100% { box-shadow: 0 0 10px rgba(244, 179, 80, 0.5); }
         }
 
-        /* الهيدر */
+        @keyframes dash {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* الهيدر المتميز */
         .header {
             background: linear-gradient(270deg, var(--primary-color), var(--secondary-color), #1a6f5a);
             background-size: 300% 300%;
             animation: gradientFlow 15s ease infinite;
             color: white;
-            padding: 4rem 0;
+            padding: 4rem 0 6rem;
             margin-bottom: 3rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
             overflow: hidden;
             border-bottom: 8px solid var(--accent-color);
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
         }
 
         .header::before {
@@ -87,6 +94,8 @@
 
         .logo-container {
             perspective: 1000px;
+            position: relative;
+            z-index: 1;
         }
 
         .logo {
@@ -102,61 +111,51 @@
             filter: drop-shadow(0 8px 25px rgba(0,0,0,0.4)) brightness(1.1);
         }
 
-        /* بطاقة المركز */
-        .center-card {
-            background: rgba(255, 255, 255, 0.98);
+        /* لوحة الإحصائيات */
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.18);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            margin-bottom: 3rem;
             overflow: hidden;
-            margin-bottom: 4rem;
-            border-top: 8px solid;
-            position: relative;
-            backdrop-filter: blur(8px);
             transform: translateY(50px);
             opacity: 0;
-            animation: fadeInUp 1s forwards 0.3s;
+            animation: fadeInUp 1s forwards 0.4s;
         }
 
         @keyframes fadeInUp {
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .male-card {
-            border-top-color: var(--male-color);
-        }
-
-        .female-card {
-            border-top-color: var(--female-color);
-        }
-
-        .center-card:hover {
-            transform: translateY(-10px) scale(1.02) !important;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-        }
-
-        .center-header {
-            padding: 2.5rem;
+        .stats-header {
+            padding: 2rem;
             text-align: center;
             position: relative;
             color: white;
-            overflow: hidden;
             clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
         }
 
-        .male-header {
+        .male-stats {
+            border-top: 8px solid var(--male-color);
+        }
+
+        .female-stats {
+            border-top: 8px solid var(--female-color);
+        }
+
+        .male-header-bg {
             background: linear-gradient(270deg, var(--male-color), #2980b9, #3498db);
             background-size: 300% 300%;
             animation: gradientFlow 12s ease infinite;
         }
 
-        .female-header {
+        .female-header-bg {
             background: linear-gradient(270deg, var(--female-color), #d32f7e, #e83f8e);
             background-size: 300% 300%;
             animation: gradientFlow 12s ease infinite;
         }
 
-        .center-header::after {
+        .stats-header::after {
             content: "";
             position: absolute;
             bottom: 0;
@@ -168,7 +167,7 @@
 
         /* العناصر الإحصائية */
         .stat-item {
-            padding: 2.2rem;
+            padding: 2rem;
             border-bottom: 1px solid rgba(0,0,0,0.08);
             transition: all 0.4s;
             display: flex;
@@ -183,22 +182,6 @@
             transform: translateX(10px);
         }
 
-        .stat-item::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 5px;
-            background: var(--accent-color);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .stat-item:hover::before {
-            opacity: 1;
-        }
-
         .stat-icon-container {
             display: flex;
             align-items: center;
@@ -206,88 +189,40 @@
         }
 
         .stat-icon {
-            font-size: 2.2rem;
-            width: 70px;
-            height: 70px;
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
             transition: all 0.5s;
             position: relative;
-        }
-
-        .stat-icon::after {
-            content: "";
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 50%;
-            border: 2px solid;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .stat-item:hover .stat-icon::after {
-            opacity: 0.3;
-            top: -8px;
-            left: -8px;
-            right: -8px;
-            bottom: -8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .male-icon {
             background-color: rgba(52, 152, 219, 0.15);
             color: var(--male-color);
-            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.2);
-        }
-
-        .male-icon::after {
-            border-color: var(--male-color);
         }
 
         .female-icon {
             background-color: rgba(232, 63, 142, 0.15);
             color: var(--female-color);
-            box-shadow: 0 8px 25px rgba(232, 63, 142, 0.2);
-        }
-
-        .female-icon::after {
-            border-color: var(--female-color);
         }
 
         .stat-item:hover .stat-icon {
             transform: rotate(15deg) scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
 
         .stat-value {
             font-size: 1.8rem;
             font-weight: bold;
-            min-width: 120px;
+            min-width: 100px;
             text-align: left;
             transition: all 0.3s;
             position: relative;
-        }
-
-        .stat-value::before {
-            content: "";
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 3px;
-            background: var(--accent-color);
-            transition: width 0.3s;
-        }
-
-        .stat-item:hover .stat-value::before {
-            width: 100%;
-        }
-
-        .stat-item:hover .stat-value {
-            transform: scale(1.1);
         }
 
         .male-value {
@@ -300,6 +235,51 @@
             text-shadow: 0 3px 6px rgba(232, 63, 142, 0.2);
         }
 
+        /* الرسوم البيانية */
+        .chart-container {
+            padding: 2rem;
+            position: relative;
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .chart-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem 1.5rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s;
+            height: 100%;
+            min-height: 320px;
+            overflow: visible;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
         /* القائمة المنسدلة */
         .select-container {
             max-width: 600px;
@@ -307,7 +287,7 @@
             position: relative;
             transform: translateY(50px);
             opacity: 0;
-            animation: fadeInUp 1s forwards 0.1s;
+            animation: fadeInUp 1s forwards 0.2s;
         }
 
         .form-select {
@@ -328,7 +308,7 @@
             transform: scale(1.03);
         }
 
-        /* الرسالة عند عدم الاختيار */
+        /* حالة عدم الاختيار */
         .no-center {
             text-align: center;
             padding: 6rem;
@@ -366,7 +346,7 @@
             background-size: 300% 300%;
             animation: gradientFlow 18s ease infinite;
             color: white;
-            padding: 4rem 0 6rem;
+            padding: 4rem 0 8rem;
             margin-top: 8rem;
             position: relative;
             clip-path: polygon(0 10%, 100% 0, 100% 100%, 0 100%);
@@ -390,14 +370,16 @@
             margin-top: -4rem;
             position: relative;
             z-index: 2;
-            box-shadow: 0 20px 40px rgba(155, 89, 182, 0.3);
+            box-shadow: 0 25px 50px rgba(155, 89, 182, 0.3);
             transform: translateY(50px);
             opacity: 0;
             animation: fadeInUp 1s forwards 0.7s;
+            transition: all 0.5s;
         }
 
         .guidance-section:hover {
-            animation: pulse 2s infinite;
+            transform: translateY(-5px) !important;
+            box-shadow: 0 30px 60px rgba(155, 89, 182, 0.4);
         }
 
         /* الأشكال العائمة */
@@ -406,7 +388,7 @@
             pointer-events: none;
             z-index: -1;
             opacity: 0.7;
-            filter: blur(30px);
+            filter: blur(40px);
         }
 
         .shape-1 {
@@ -468,7 +450,7 @@
             display: none;
         }
 
-        /* تأثيرات خاصة للجوائز */
+        /* تأثيرات خاصة */
         .premium-feature {
             position: relative;
             overflow: hidden;
@@ -509,7 +491,7 @@
             }
             
             .header {
-                padding: 3rem 0;
+                padding: 3rem 0 5rem;
             }
             
             .logo {
@@ -522,8 +504,8 @@
             
             .stat-icon {
                 font-size: 1.8rem;
-                width: 60px;
-                height: 60px;
+                width: 50px;
+                height: 50px;
             }
             
             .stat-value {
@@ -534,6 +516,10 @@
                 padding: 18px 30px;
                 font-size: 1.3rem;
             }
+            
+            .chart-card {
+                min-height: 280px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -542,8 +528,8 @@
             }
             
             .header {
-                padding: 2.5rem 0;
-                clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+                padding: 2.5rem 0 4rem;
+                clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
             }
             
             .logo {
@@ -558,12 +544,17 @@
                 font-size: 5rem;
             }
             
-            .center-header {
-                padding: 2rem;
+            .stats-header {
+                padding: 1.5rem;
             }
             
             .stat-item {
                 padding: 1.5rem;
+            }
+            
+            .chart-card {
+                min-height: 250px;
+                padding: 1.5rem 1.5rem 2rem;
             }
         }
 
@@ -573,7 +564,7 @@
             }
             
             .header {
-                padding: 2rem 0;
+                padding: 2rem 0 3rem;
             }
             
             .logo {
@@ -595,8 +586,8 @@
             
             .stat-icon {
                 font-size: 1.6rem;
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
             }
             
             .stat-value {
@@ -605,6 +596,15 @@
             
             .footer {
                 clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+            }
+            
+            .guidance-section {
+                margin-top: -3rem;
+            }
+            
+            .chart-card {
+                min-height: 220px;
+                padding: 1rem 1rem 1.5rem;
             }
         }
     </style>
@@ -640,59 +640,88 @@
         </div>
 
         <div id="center-info" class="row justify-content-center" style="display: none;">
-            <div class="col-lg-8">
-                <div class="center-card premium-feature" id="gender-card">
-                    <div class="center-header" id="gender-header">
-                        <h2 id="center-name"></h2>
+            <div class="col-lg-10">
+                <div class="stats-panel premium-feature" id="gender-stats">
+                    <div class="stats-header" id="stats-header">
+                        <h2 id="center-name" class="mb-2"></h2>
                         <p id="center-gender" class="mb-0"></p>
                     </div>
                     
-                    <div class="stat-item">
-                        <div class="stat-icon-container">
-                            <i class="fas fa-users stat-icon" id="students-icon"></i>
-                            <span>عدد الطلبة</span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="stat-item">
+                                <div class="stat-icon-container">
+                                    <i class="fas fa-users stat-icon" id="students-icon"></i>
+                                    <span>عدد الطلبة</span>
+                                </div>
+                                <span class="stat-value" id="students-count"></span>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <div class="stat-icon-container">
+                                    <i class="fas fa-door-open stat-icon" id="halls-icon"></i>
+                                    <span>عدد القاعات</span>
+                                </div>
+                                <span class="stat-value" id="halls-count"></span>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <div class="stat-icon-container">
+                                    <i class="fas fa-book stat-icon" id="programs-icon"></i>
+                                    <span>عدد البرامج</span>
+                                </div>
+                                <span class="stat-value" id="programs-count"></span>
+                            </div>
                         </div>
-                        <span class="stat-value" id="students-count"></span>
+                        
+                        <div class="col-md-6">
+                            <div class="stat-item">
+                                <div class="stat-icon-container">
+                                    <i class="fas fa-bus stat-icon" id="trips-icon"></i>
+                                    <span>عدد الرحلات</span>
+                                </div>
+                                <span class="stat-value" id="trips-count"></span>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <div class="stat-icon-container">
+                                    <i class="fas fa-map-marked-alt stat-icon" id="visits-icon"></i>
+                                    <span>عدد الزيارات</span>
+                                </div>
+                                <span class="stat-value" id="visits-count"></span>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <div class="stat-icon-container">
+                                    <i class="fas fa-chalkboard-teacher stat-icon" id="trainers-icon"></i>
+                                    <span>عدد المدربين</span>
+                                </div>
+                                <span class="stat-value" id="trainers-count"></span>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="stat-item">
-                        <div class="stat-icon-container">
-                            <i class="fas fa-door-open stat-icon" id="halls-icon"></i>
-                            <span>عدد القاعات</span>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="chart-card">
+                                <h5 class="chart-title">التوزيع النسبي</h5>
+                                <canvas id="pieChart" height="250"></canvas>
+                            </div>
                         </div>
-                        <span class="stat-value" id="halls-count"></span>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <div class="stat-icon-container">
-                            <i class="fas fa-book stat-icon" id="programs-icon"></i>
-                            <span>عدد البرامج المقدمة</span>
+                        
+                        <div class="col-md-6">
+                            <div class="chart-card">
+                                <h5 class="chart-title">المقارنة الإحصائية</h5>
+                                <canvas id="barChart" height="250"></canvas>
+                            </div>
                         </div>
-                        <span class="stat-value" id="programs-count"></span>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <div class="stat-icon-container">
-                            <i class="fas fa-bus stat-icon" id="trips-icon"></i>
-                            <span>عدد الرحلات</span>
+                        
+                        <div class="col-md-12 mt-4">
+                            <div class="chart-card">
+                                <h5 class="chart-title">النشاطات والبرامج</h5>
+                                <canvas id="lineChart" height="250"></canvas>
+                            </div>
                         </div>
-                        <span class="stat-value" id="trips-count"></span>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <div class="stat-icon-container">
-                            <i class="fas fa-map-marked-alt stat-icon" id="visits-icon"></i>
-                            <span>عدد الزيارات الخارجية</span>
-                        </div>
-                        <span class="stat-value" id="visits-count"></span>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <div class="stat-icon-container">
-                            <i class="fas fa-chalkboard-teacher stat-icon" id="trainers-icon"></i>
-                            <span>عدد المدربين</span>
-                        </div>
-                        <span class="stat-value" id="trainers-count"></span>
                     </div>
                 </div>
             </div>
@@ -701,7 +730,7 @@
         <div id="no-center" class="no-center">
             <i class="fas fa-info-circle"></i>
             <h4 class="mt-3">الرجاء اختيار مركز من القائمة</h4>
-            <p class="text-muted">سيتم عرض إحصائيات المركز المختار هنا</p>
+            <p class="text-muted">سيتم عرض إحصائيات المركز المختار هنا مع لوحة بيانات تفاعلية</p>
         </div>
     </div>
 
@@ -709,7 +738,7 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="guidance-section animate__animated animate__pulse animate__infinite animate__slower">
+                    <div class="guidance-section">
                         <h4 class="mb-3"><i class="fas fa-graduation-cap me-2"></i>دائرة التوجيه المهني والإرشاد الطلابي</h4>
                         <p class="mb-0">تعليمية محافظة الظاهرة</p>
                     </div>
@@ -731,8 +760,8 @@
         const centerSelect = document.getElementById('center-select');
         const centerInfo = document.getElementById('center-info');
         const noCenter = document.getElementById('no-center');
-        const genderCard = document.getElementById('gender-card');
-        const genderHeader = document.getElementById('gender-header');
+        const genderStats = document.getElementById('gender-stats');
+        const statsHeader = document.getElementById('stats-header');
         const clickOutsideListener = document.getElementById('clickOutsideListener');
         
         // عناصر البيانات
@@ -760,6 +789,9 @@
             studentsCount, hallsCount, programsCount, 
             tripsCount, visitsCount, trainersCount
         ];
+        
+        // المتغيرات العالمية للرسوم البيانية
+        let pieChart, barChart, lineChart;
         
         // جلب البيانات من Google Sheets
         async function fetchData() {
@@ -836,9 +868,9 @@
             const isMale = center['اسم المركز'].includes('حذيفة') || center['اسم المركز'].includes('حمود');
             
             if (isMale) {
-                genderCard.classList.add('male-card');
-                genderCard.classList.remove('female-card');
-                genderHeader.className = 'center-header male-header';
+                genderStats.classList.add('male-stats');
+                genderStats.classList.remove('female-stats');
+                statsHeader.className = 'stats-header male-header-bg';
                 centerGender.textContent = 'مركز ذكور';
                 centerGender.innerHTML += ' <i class="fas fa-mars"></i>';
                 
@@ -852,9 +884,9 @@
                     value.classList.remove('female-value');
                 });
             } else {
-                genderCard.classList.add('female-card');
-                genderCard.classList.remove('male-card');
-                genderHeader.className = 'center-header female-header';
+                genderStats.classList.add('female-stats');
+                genderStats.classList.remove('male-stats');
+                statsHeader.className = 'stats-header female-header-bg';
                 centerGender.textContent = 'مركز إناث';
                 centerGender.innerHTML += ' <i class="fas fa-venus"></i>';
                 
@@ -869,21 +901,230 @@
                 });
             }
             
-            studentsCount.textContent = center['عدد الطلبة'] || 'غير متوفر';
-            hallsCount.textContent = center['عدد القاعات'] || 'غير متوفر';
-            programsCount.textContent = center['عدد البرامج المثقرة'] || 'غير متوفر';
-            tripsCount.textContent = center['عدد الرحلات'] || 'غير متوفر';
-            visitsCount.textContent = center['عدد الزيارات الخارجية'] || 'غير متوفر';
-            trainersCount.textContent = center['عدد المدربين'] || 'غير متوفر';
+            // تعبئة البيانات
+            const students = center['عدد الطلبة'] ? parseInt(center['عدد الطلبة']) : 0;
+            const halls = center['عدد القاعات'] ? parseInt(center['عدد القاعات']) : 0;
+            const programs = center['عدد البرامج المثقرة'] ? parseInt(center['عدد البرامج المثقرة']) : 0;
+            const trips = center['عدد الرحلات'] ? parseInt(center['عدد الرحلات']) : 0;
+            const visits = center['عدد الزيارات الخارجية'] ? parseInt(center['عدد الزيارات الخارجية']) : 0;
+            const trainers = center['عدد المدربين'] ? parseInt(center['عدد المدربين']) : 0;
+            
+            studentsCount.textContent = students || 'غير متوفر';
+            hallsCount.textContent = halls || 'غير متوفر';
+            programsCount.textContent = programs || 'غير متوفر';
+            tripsCount.textContent = trips || 'غير متوفر';
+            visitsCount.textContent = visits || 'غير متوفر';
+            trainersCount.textContent = trainers || 'غير متوفر';
+            
+            // إنشاء الرسوم البيانية
+            createCharts(students, halls, programs, trips, visits, trainers, isMale);
             
             noCenter.style.display = 'none';
             centerInfo.style.display = 'block';
             
             // إضافة تأثير مميز عند العرض
-            genderCard.classList.add('animate__animated', 'animate__pulse');
+            genderStats.classList.add('animate__animated', 'animate__pulse');
             setTimeout(() => {
-                genderCard.classList.remove('animate__animated', 'animate__pulse');
+                genderStats.classList.remove('animate__animated', 'animate__pulse');
             }, 1000);
+        }
+        
+        // إنشاء الرسوم البيانية
+        function createCharts(students, halls, programs, trips, visits, trainers, isMale) {
+            // تدمير الرسوم البيانية القديمة إذا كانت موجودة
+            if (pieChart) pieChart.destroy();
+            if (barChart) barChart.destroy();
+            if (lineChart) lineChart.destroy();
+            
+            const primaryColor = isMale ? 'rgba(52, 152, 219, 0.7)' : 'rgba(232, 63, 142, 0.7)';
+            const hoverColor = isMale ? 'rgba(52, 152, 219, 1)' : 'rgba(232, 63, 142, 1)';
+            const bgColor = isMale ? 'rgba(52, 152, 219, 0.2)' : 'rgba(232, 63, 142, 0.2)';
+            
+            // رسم بياني دائري
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['الطلبة', 'القاعات', 'المدربين'],
+                    datasets: [{
+                        data: [students, halls, trainers],
+                        backgroundColor: [
+                            primaryColor,
+                            'rgba(244, 179, 80, 0.7)',
+                            'rgba(155, 89, 182, 0.7)'
+                        ],
+                        borderColor: [
+                            hoverColor,
+                            'rgba(244, 179, 80, 1)',
+                            'rgba(155, 89, 182, 1)'
+                        ],
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            rtl: true,
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            rtl: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: 10,
+                            bottom: 20,
+                            left: 10,
+                            right: 10
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+            
+            // رسم بياني شريطي
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['البرامج', 'الرحلات', 'الزيارات'],
+                    datasets: [{
+                        label: 'النشاطات',
+                        data: [programs, trips, visits],
+                        backgroundColor: [
+                            primaryColor,
+                            'rgba(244, 179, 80, 0.7)',
+                            'rgba(155, 89, 182, 0.7)'
+                        ],
+                        borderColor: [
+                            hoverColor,
+                            'rgba(244, 179, 80, 1)',
+                            'rgba(155, 89, 182, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            bottom: 30,
+                            top: 10,
+                            left: 10,
+                            right: 10
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                padding: 15
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                padding: 10
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            rtl: true
+                        }
+                    },
+                    animation: {
+                        delay: function(context) {
+                            return context.dataIndex * 200;
+                        }
+                    }
+                }
+            });
+            
+            // رسم بياني خطي
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            lineChart = new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['الطلبة', 'القاعات', 'البرامج', 'الرحلات', 'الزيارات', 'المدربين'],
+                    datasets: [{
+                        label: 'الإحصائيات',
+                        data: [students, halls, programs, trips, visits, trainers],
+                        fill: true,
+                        backgroundColor: bgColor,
+                        borderColor: primaryColor,
+                        borderWidth: 3,
+                        tension: 0.3,
+                        pointBackgroundColor: primaryColor,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            rtl: true
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            bottom: 30,
+                            top: 10,
+                            left: 10,
+                            right: 10
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                padding: 10
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                padding: 10
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
         }
         
         // إخفاء معلومات المركز
@@ -892,6 +1133,11 @@
             centerInfo.style.display = 'none';
             centerSelect.value = '';
             clickOutsideListener.style.display = 'none';
+            
+            // تدمير الرسوم البيانية عند الإخفاء
+            if (pieChart) pieChart.destroy();
+            if (barChart) barChart.destroy();
+            if (lineChart) lineChart.destroy();
         }
         
         // بدء التطبيق
